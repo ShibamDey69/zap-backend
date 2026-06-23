@@ -17,7 +17,7 @@ enum SubscriptionType {
 
 enum OTPType {
   RESET
-  FORGOT
+  LOGIN
   VERIFY
 }
 
@@ -56,7 +56,7 @@ enum BrowserType {
 model User {
   id        String      @id @default(uuid())
   email     String   @unique
-  password  String?
+  passwordHashed  String?
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -77,14 +77,14 @@ model OAuthAccount {
   createdAt DateTime @default(now())
 
   @@index([userId])
-  @@index([providerId, type])
+  @@unique([providerId, type])
 }
 
 model RefreshToken {
   id        String      @id @default(uuid())
   userId    String
   user      User        @relation(fields: [userId], references: [id], onDelete:Cascade )
-  token     String
+  tokenHashed     String
   createdAt DateTime @default(now())
   expiresAt DateTime
 
@@ -98,6 +98,7 @@ model Subscription {
   type      SubscriptionType
   status    SubscriptionStatus
   expiresAt DateTime
+  createdAt DateTime @default(now())
 
   @@index([userId])
 }
@@ -109,13 +110,13 @@ model OTP {
   user      User        @relation(fields: [userId], references: [id], onDelete:Cascade )
   type      OTPType
   code      String
-  verified  Boolean @default(false)
+  isVerified  Boolean @default(false)
   attempts  Int     @default(0)
   createdAt DateTime @default(now())
   expiresAt DateTime
 
   @@index([userId])
-  @@index([email, type])
+  @@index([email, type, isVerified])
   @@index([expiresAt])
 }
 
@@ -126,13 +127,13 @@ model Link {
   slug      String      @unique
   title     String
   isPasswordProtected Boolean @default(false)
-  password  String?
+  passwordHashed  String?
   totalClicks Int @default(0)
   tags      String[]
   color     String?
   isActive   Boolean @default(true)
   isDeleted  Boolean @default(false)
-  destinationUrl       String @db.text
+  destinationUrl       String @db.Text
   createdAt DateTime @default(now())
   expiresAt DateTime?
   updatedAt DateTime @updatedAt
@@ -149,8 +150,9 @@ model LinkClick {
   device    DeviceType
   browser   BrowserType
   os        OSType
-  ip        String
+  ipHashed  String
   country   String
+  refer     String?
   utm_source String?
   utm_campaign String?
   utm_medium String?
