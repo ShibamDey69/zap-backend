@@ -1,0 +1,30 @@
+{
+  "name": "zap-backend",
+  "version": "0.0.0",
+  "description": "backend for zap url shortner",
+  "main": "src/server.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "bun --watch src/server.js"
+  },
+  "author": "ShibamDey69",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "compression": "^1.8.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "morgan": "^1.11.0"
+  }
+}
