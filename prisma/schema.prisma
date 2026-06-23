@@ -32,6 +32,27 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
+enum DeviceType {
+  MOBILE
+  DESKTOP
+  TABLET
+}
+
+enum OSType {
+  ANDROID
+  IOS
+  WINDOWS
+  MACOS
+  LINUX
+}
+
+enum BrowserType {
+  CHROME
+  FIREFOX
+  SAFARI
+  EDGE
+}
+
 model User {
   id        String      @id @default(uuid())
   email     String   @unique
@@ -45,8 +66,6 @@ model User {
   oAuthAccounts OAuthAccount[]
   refreshTokens RefreshToken[]
   subscriptions Subscription?
-
-  @@index([email])
 }
 
 model OAuthAccount {
@@ -54,9 +73,11 @@ model OAuthAccount {
   userId    String
   user      User        @relation(fields: [userId], references: [id], onDelete:Cascade )
   type      OAuthType
+  providerId string
   createdAt DateTime @default(now())
 
   @@index([userId])
+  @@index([providerId, type])
 }
 
 model RefreshToken {
@@ -72,7 +93,7 @@ model RefreshToken {
 
 model Subscription {
   id        String      @id @default(uuid())
-  userId    String
+  userId    String      @unique
   user      User        @relation(fields: [userId], references: [id], onDelete:Cascade )
   type      SubscriptionType
   status    SubscriptionStatus
@@ -87,7 +108,7 @@ model OTP {
   userId    String
   user      User        @relation(fields: [userId], references: [id], onDelete:Cascade )
   type      OTPType
-  code      String @unique
+  code      String
   verified  Boolean @default(false)
   attempts  Int     @default(0)
   createdAt DateTime @default(now())
@@ -102,7 +123,7 @@ model Link {
   id        String      @id @default(uuid())
   userId    String
   user      User        @relation(fields: [userId], references: [id], onDelete:Cascade )
-  slug      String
+  slug      String      @unique
   title     String
   isPasswordProtected Boolean @default(false)
   password  String?
@@ -111,26 +132,23 @@ model Link {
   color     String?
   isActive   Boolean @default(true)
   isDeleted  Boolean @default(false)
-  destinationUrl       String
+  destinationUrl       String @db.text
   createdAt DateTime @default(now())
   expiresAt DateTime?
   updatedAt DateTime @updatedAt
   clicks    LinkClick[]
 
   @@index([userId])
-  @@index([slug])
 }
 
 model LinkClick {
   id        String      @id @default(uuid())
   linkId    String
   link      Link        @relation(fields: [linkId], references: [id], onDelete:Cascade )
-  userId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete:Cascade )
   clickedAt DateTime @default(now())
-  device    String
-  browser   String
-  os        String
+  device    DeviceType
+  browser   BrowserType
+  os        OSType
   ip        String
   country   String
   utm_source String?
@@ -140,18 +158,9 @@ model LinkClick {
   utm_content String?
 
   @@index([linkId])
-  @@index([userId])
-  @@index([clickedAt])
-  @@index([device])
-  @@index([browser])
   @@index([os])
-  @@index([ip])
   @@index([country])
   @@index([utm_source])
-  @@index([utm_campaign])
-  @@index([utm_medium])
-  @@index([utm_term])
-  @@index([utm_content])
 }
 
 
