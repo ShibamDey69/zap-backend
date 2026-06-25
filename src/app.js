@@ -3,6 +3,7 @@ import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
 import morgan from "morgan";
+import authRouter from "./modules/auth/auth.routes.js";
 
 const app = express();
 
@@ -23,5 +24,5 @@ app.disable('x-powered-by');
 app.get("/", (req, res) => {
   res.json({"hello":"world"})
 })
-
+app.use("/auth",authRouter);
 export default app;

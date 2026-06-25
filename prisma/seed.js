@@ -1,5 +1,8 @@
 import prisma from "../src/plugins/prisma.js"
 import crypto from "crypto";
+import dotenv from "dotenv";
+dotenv.config()
+//console.log(process.env.DATABASE_URL);
 async function main() {
 // Cleanup
 await prisma.linkClick.deleteMany();

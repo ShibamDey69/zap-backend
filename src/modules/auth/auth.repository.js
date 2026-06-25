@@ -5,7 +5,7 @@ export default class AuthRepository {
   async findById(id) {
     return await this.prisma.auth.findUnique({
       where: {
-        id,
+    id,
       },
     });
   }

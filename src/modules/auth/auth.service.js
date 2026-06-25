@@ -9,6 +9,7 @@ export default class AuthService {
   async register(data) {
     try {
       const existingUser = await this.repository.findByEmail(data.email);
+      console.log(existingUser);
       if (existingUser) {
         throw new Error("User already exists");
       }
